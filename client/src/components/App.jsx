@@ -7,11 +7,16 @@ class App extends React.Component {
     super(props)
     this.state = {
       pokes: [],
-      type: []
+      type: [],
+      name: '',
+      _type: '',
+      img: ''
     }
     this.fetchpoke = this.fetchpoke.bind(this);
     this.filterType = this.filterType.bind(this);
     this.fetchByType = this.fetchByType.bind(this);
+    this.insert = this.insert.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -62,6 +67,29 @@ class App extends React.Component {
     })
   }
 
+  insert(e) {
+    e.preventDefault();
+    axios.post('/api', {
+      name: this.state.name,
+      type: this.state._type,
+      img: this.state.img
+    })
+      .then(result => {
+        this.fetchpoke();
+      })
+      .then(() => this.filterType())
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  handleChange(e) {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+
+  }
+
   render() {
     return (
       <div>
@@ -78,7 +106,33 @@ class App extends React.Component {
               })
             }
           </select>
-          <button>INSERT</button>
+          <form>
+            <div>
+              <label htmlFor='name'>Name</label>
+              <input
+                id='name'
+                name='name'
+                onChange={this.handleChange}>
+              </input>
+            </div>
+            <div>
+              <label htmlFor='type' >Type</label>
+              <input
+                id='type'
+                name='_type'
+                onChange={this.handleChange}>
+              </input>
+            </div>
+            <div>
+              <label htmlFor='img'>Picture URL</label>
+              <input
+                id='img'
+                name='img'
+                onChange={this.handleChange}>
+              </input>
+            </div>
+            <button onClick={this.insert}>INSERT</button>
+          </form>
           {
             this.state.pokes.map(poke => {
               return (
